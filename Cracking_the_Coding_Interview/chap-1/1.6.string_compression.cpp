@@ -57,6 +57,7 @@ int main()
     int maxlen = ins.length() * 2;
     char *p = new(nothrow) char[maxlen];
     compress(ins, p, maxlen);
+    delete [] p;
     return 0;
 }
 
