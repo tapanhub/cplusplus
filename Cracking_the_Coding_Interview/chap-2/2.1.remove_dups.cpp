@@ -71,6 +71,9 @@ int node::show(void) {
 int node::freelist(void) {
     node *element = this; //head
     int cnt = 0;
+    cout << "########################################################" << endl;
+    cout << "        Deleting whole list before exit" << endl;
+    cout << "########################################################" << endl;
     while(element) {
         cout << "deleting "<< setw(5) << element->data << endl;
         node *freenode = element;
@@ -98,16 +101,24 @@ int node::freedups(void) {
     class myset s;
     node *element = this;
     node *prev = NULL;
+    node *tmp = NULL;
+    int delete_node = false;
     while(element) {
         if(s.addtohashtable(element) == 1) {
-            if(element->next) {
-                class node *n = element->next->next;
-                element->set(element->next->get());
-                delete element->next;
-                element->next = n;
+            if(prev) {
+                prev->next = element->next;
+                tmp = element;
+                delete_node = true;
             }
+        } else {
+            prev = element;
         }
         element = element->next;
+        if(delete_node == true && tmp) {
+            delete tmp;
+            tmp = NULL;
+            delete_node = false;
+        }
     }
     return 0;
 }
@@ -124,9 +135,11 @@ int myset::addtohashtable(class node *n) {
     if(hentry) {
         hashentry  *nhead = hentry;
         struct hashentry *he = nhead;
-        for(;he->next; he = he->next) {
+        for(;he; he = he->next) {
+            cout << __func__ << "he->n->get() = " << he->n->get() << " and n->get() = " << n->get() << endl;
             if(he->n->get() == n->get()) {
                 cout << "deleting duplicate entry " << n->get() << endl;
+                delete e;
                 return 1;
             }
         }
